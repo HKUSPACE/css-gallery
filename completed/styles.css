@@ -1,0 +1,279 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
+body {
+	font-family: 'Lato', Calibri, Arial, sans-serif;
+	color: #89867e;
+	background: #f9f9f9;
+}
+
+*, *:after, *:before { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+
+a {
+    text-decoration: none;
+    outline: none;
+}
+
+a img {
+    border: none;
+}
+
+
+/*
+The anchor will be displayed as an inline-block element, allowing content to flow around it. We add some margin and set the position to relative. This is important because we’ll position the pseudo-elements absolutely and this will allow us to do so relatively to the anchor.
+
+Giving the image a max-width of 100% prepares it for a responsive environment.
+*/
+
+.caption {
+	display: inline-block;
+	position: relative;
+	margin: 10px;
+}
+
+.caption img {
+	display: block;
+	max-width: 100%;
+}
+
+
+
+/************* Caption next to image *************/
+
+/*
+By setting the left to 100%, we put the pseudo-elements right next to the image. 90% is relative to the width of our anchor which again is defined by its content, the image.
+
+Let’s set the content for each pseudo-element. We’ll get the value of the respective data attribute and add it to the content of the pseudo-element by using attr():
+*/
+
+.next-to-image::before,
+.next-to-image::after {
+	position: absolute;
+	left: 100%;
+	width: 90%;
+	margin: 0 0 0 10%;
+	font-weight: 300;
+	color: #89867e;
+}
+
+.next-to-image::before {
+	content: attr(data-title);
+	top: 0;
+	height: 25%;
+	padding: 5px 30px 15px 10px;
+	font-size: 32px;
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.next-to-image::after {
+	content: attr(data-description);
+	top: 25%;
+	padding: 20px 10px 0;
+	font-size: 18px;
+}
+
+
+
+/************* Show on hover (opacity) *************/
+
+/*
+Make a caption that shows on hover by simply animating the opacity of the pseudo-elements. For that we’ll set them to an absolute position again. But this time, they will cover the image. Setting the opacity to 0 and a transition for the opacity, will allow us to animate it on hover
+*/
+
+.show-on-hover::before,
+.show-on-hover::after {
+	opacity: 0;
+	position: absolute;
+	width: 100%;
+	color: #fff;
+	padding: 20px;
+	transition: opacity 0.3s; 
+}
+
+/*
+The title will have a different background color than the description and we’ll restrict its height to 30% of the total height
+*/
+
+.show-on-hover::before {
+	content: attr(data-title);
+	top: 0;
+	height: 30%;
+	background: #a21f00;
+	font-size: 32px;
+	font-weight: 300;
+}
+
+/*
+For the description we will not simply add the data-description value, but we will prepend and append an opening and a closing quotation marks. For that we add the CSS values for the marks. The background will be slightly lighter to the one of the title and we will align the text to the right.
+
+Entity Conversion Calculator
+http://www.evotech.net/articles/testjsentities.html
+*/
+
+.show-on-hover::after {
+	content: '\201C' attr(data-description) '\201D';
+	top: 30%;
+	height: 70%;
+	background: #db2e00;
+	font-size: 16px;
+	text-align: right;
+}
+
+/*
+And finally, we set the opacity to 1 on hover
+*/
+.show-on-hover:hover::before,
+.show-on-hover:hover::after {
+	opacity: 1;
+}
+
+
+
+/************* Slide in on hover (transform) *************/
+
+/*
+On hover, we want it to slide in the title from the top and the description from the bottom. We also want to make the image darker to simulate a shadow. For that, we need to define some more things for the caption anchor and image.
+
+The anchor’s overflow needs to be set to hidden because we need to position our title and description outside of it and we, of course, don’t want to see them. Additionally, we’ll give the anchor a black background so that we can darken the image when we reduce its opacity
+*/
+
+.slide-in-on-hover {
+	overflow: hidden;
+	background: #000;
+}
+
+
+/*
+We’ll add a transition to the image and set the opacity to 0.5 once we hover. This will make the image appear darker, just as we want
+*/
+
+.slide-in-on-hover img {
+	transition: opacity 0.3s ease-in-out; 
+}
+
+.slide-in-on-hover:hover img {
+	opacity: 0.5;
+}
+
+/*
+The common style of the ::before and ::after pseudo-elements is similar to the previous examples, just that we now give them an equal height and set the z-index to 1 so that they really stay on top of the image. The transition that we are adding will be for the transform. As you will see in the individual styles, we’ll position the pseudo-elements outside of the anchor rectangle by translating them on the Y-axis.
+*/
+
+.slide-in-on-hover::after,
+.slide-in-on-hover::before {
+	position: absolute;
+	width: 100%;
+	height: 50%;
+	color: #fff;
+	z-index: 1;
+	transition: transform 0.3s ease-in-out; 
+}
+
+/*
+Let’s set the background colors for the pseudo-elements and the transforms to move the title up and the description down:
+*/
+
+.slide-in-on-hover::after {
+	content: attr(data-title);
+	top: 0;
+	background: #0083ab;
+	font-size: 32px;
+	font-weight: 300;
+	padding: 30px;
+	transform: translateY(-100%);
+}
+
+.slide-in-on-hover::before {
+	content: '...' attr(data-description) '...';
+	top: 50%;
+	background: #f27545;
+	font-size: 14px;
+	padding: 20px;
+	transform: translateY(100%);
+}
+
+/*
+And on hover, we simply set the transform to translateY(0%) so that they go to the position we defined with the tops:
+*/
+
+.slide-in-on-hover:hover::after,
+.slide-in-on-hover:hover::before {
+	transform: translateY(0%);
+}
+
+
+
+/************* Side push on hover (transform) *************/
+/*
+On hover, we want to move the image to the right while sliding in the pseudo-elements from the left, slightly shifted.
+
+Let’s again create the shadow effect by animating the background of the anchor from a semi-transparent black to transparent
+*/
+
+.slide-push-on-hover {
+	display: inline-block;
+	position: relative;
+	margin: 10px;
+	overflow: hidden;
+	background: rgba(0,0,0,0.2);
+	transition: background 0.3s ease-in-out;
+}
+
+.slide-push-on-hover:hover {
+	background: rgba(0,0,0,0);
+}
+
+/*
+The image will move to the right when we hover. For that, we’ll use translateX
+*/
+
+.slide-push-on-hover img {
+	transition: transform 0.3s ease-in-out;
+}
+
+.slide-push-on-hover:hover img {
+	transform: translateX(100%);
+}
+
+/*
+The pseudo-elements need to be beneath the anchor, so we’ll set a z-index of -1. The initial transform will set them to the left side
+*/
+
+.slide-push-on-hover::before,
+.slide-push-on-hover::after {
+	position: absolute;
+	width: 100%;
+	z-index: -1;
+	background: #cecece;
+	transform: translateX(-30%);
+	transition: transform 0.3s ease-in-out;
+}
+
+/*
+As before, we will add the respective content to the pseudo-elements and give them a height and some styles for the text
+*/
+
+.slide-push-on-hover::before {
+	content: attr(data-title);
+	height: 30%;
+	color: #05b19a;
+	font-size: 32px;
+	font-weight: 300;
+	padding: 20px;
+}
+
+.slide-push-on-hover::after {
+	content: '\201C' attr(data-description) '\201D';
+	top: 30%;
+	height: 70%;
+	color: #fff;
+	font-size: 14px;
+	padding: 20px 30px;
+}
+
+/*
+And on hover, we’ll simply set the translateX to 0
+*/
+
+.slide-push-on-hover:hover::before,
+.slide-push-on-hover:hover::after  {
+	transform: translateX(0%);
+}
